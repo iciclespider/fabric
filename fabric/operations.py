@@ -261,10 +261,10 @@ def put(local_path, remote_path, mode=None):
     
     """
     ftp = connections[env.host_string].open_sftp()
-    with closing(ftp) as  ftp:
+    with closing(ftp) as ftp:
         # Do jury-rigged tilde expansion, but only if we can do it nicely.
-        # TODO: tie into global output controls -- as a user! (i.e. hide all output
-        # from this chunk below if possible)
+        # TODO: tie into global output controls -- as a user! (i.e. hide all
+        # output from this chunk below if possible)
         with warnings_only():
             cwd = run('pwd')
         if not cwd.failed:
@@ -287,7 +287,10 @@ def put(local_path, remote_path, mode=None):
             # first, figure out the real, absolute, remote path
             _remote_path = remote_path
             if rmode is not None and stat.S_ISDIR(rmode):
-                _remote_path = os.path.join(remote_path, os.path.basename(lpath))
+                _remote_path = os.path.join(
+                    remote_path,
+                    os.path.basename(lpath)
+                )
             
             # TODO: tie this into global output controls
             print("[%s] put: %s -> %s" % (env.host_string, lpath, _remote_path))
@@ -436,7 +439,7 @@ def sudo(command, shell=True, user=None):
     """
     # Construct sudo command, with user if necessary
     if user is not None:
-        if str(user).isint():
+        if str(user).isdigit():
             user = "#%s" % user
         sudo_prefix = "sudo -S -p '%%s' -u \"%s\" " % user
     else:
